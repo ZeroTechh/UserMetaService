@@ -25,7 +25,7 @@ func main() {
 	defer log.Info("Service Stopped")
 
 	grpcServer, listner := utils.CreateGRPCServer(
-		services.UserMainService,
+		services.UserMetaService,
 		log,
 	)
 
