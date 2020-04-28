@@ -3,13 +3,12 @@ package main
 import (
 	"go.uber.org/zap"
 
+	"github.com/ZeroTechh/UserMetaService/handler"
 	"github.com/ZeroTechh/VelocityCore/logger"
 	proto "github.com/ZeroTechh/VelocityCore/proto/UserMetaService"
 	"github.com/ZeroTechh/VelocityCore/services"
 	"github.com/ZeroTechh/VelocityCore/utils"
 	"github.com/ZeroTechh/hades"
-
-	"github.com/ZeroTechh/UserMetaService/serviceHandler"
 )
 
 var (
@@ -22,18 +21,11 @@ var (
 
 func main() {
 	defer utils.HandlePanic(log)
-	defer log.Info("Service Stopped")
-
 	grpcServer, listner := utils.CreateGRPCServer(
 		services.UserMetaService,
 		log,
 	)
-
-	serviceHandler := serviceHandler.New()
-
-	proto.RegisterUserMetaServer(grpcServer, serviceHandler)
-
-	log.Info("Service Started")
+	proto.RegisterUserMetaServer(grpcServer, handler.New())
 	if err := grpcServer.Serve(*listner); err != nil {
 		log.Fatal("Service Failed With Error", zap.Error(err))
 	}
