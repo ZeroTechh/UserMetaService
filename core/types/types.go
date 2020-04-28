@@ -1,6 +1,6 @@
 package types
 
-// Meta is used to store user meta data
+// Meta stores meta data of user.
 type Meta struct {
 	UserID             string `bson:"_id,omitempty,-"`
 	AccountStatus      string `bson:"AccountStatus,omitempty,-"`

@@ -1,6 +1,7 @@
-package metaDB
+package meta
 
 import (
+	"context"
 	"math/rand"
 	"testing"
 	"time"
@@ -8,8 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-// generateRandStr generates a random string
-func generateRandStr(length int) string {
+func randStr(length int) string {
 	charset := "1234567890abcdefghijklmnopqrstuvwxyz"
 	seededRand := rand.New(
 		rand.NewSource(time.Now().UnixNano()))
@@ -22,18 +22,21 @@ func generateRandStr(length int) string {
 
 func TestMetaDB(t *testing.T) {
 	assert := assert.New(t)
-	metaDB := New()
+	ctx := context.TODO()
+	m := New()
 
-	// Testing Create
-	userID := generateRandStr(10)
-	metaDB.Create(userID)
+	// Testing Create.
+	userID := randStr(10)
+	assert.NoError(m.Create(ctx, userID))
 
-	// Testing Get
-	data := metaDB.Get(userID)
+	// Testing Get.
+	data, err := m.Get(ctx, userID)
 	assert.NotZero(data.AccountStatus)
 	assert.NotZero(data.AccountCreationUTC)
+	assert.NoError(err)
 
-	// Testing ChangeStatus
-	metaDB.ChangeStatus(userID, "something")
-	assert.Equal("something", metaDB.Get(userID).AccountStatus)
+	// Testing ChangeStatus.
+	assert.NoError(m.SetStatus(ctx, userID, "something"))
+	data, _ = m.Get(ctx, userID)
+	assert.Equal("something", data.AccountStatus)
 }
